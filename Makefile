@@ -38,6 +38,6 @@ $(SimpleOS): $(ASM_OBJS) $(LINKER_SCRIPT)
   
 build/%.o: boot/%.S
   mkdir -p $(shell dirname $@)
-  $(AS) -march=S(ARCH) -mcpu=$(MCPU) -I $(INC_DIRS) -g -o $@ $<
+  $(CC) -march=S(ARCH) -mcpu=$(MCPU) -I $(INC_DIRS) -c -g -o $@ $<
 
 
