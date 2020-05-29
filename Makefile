@@ -11,6 +11,8 @@ LINKER_SCRIPT = ./SimpleOS.ld
 ASM_SRCS = $(wildcard boot/*.S)
 ASM_OBJS = $(patsubst boot/%.S, build/%.o, $(ASM_SRCS))
 
+INC_DIRS = include
+
 SimpleOS = build/SimpleOS.axf
 SimpleOS_bin = build/SimpleOS.bin
 
@@ -36,6 +38,6 @@ $(SimpleOS): $(ASM_OBJS) $(LINKER_SCRIPT)
   
 build/%.o: boot/%.S
   mkdir -p $(shell dirname $@)
-  $(AS) -march=S(ARCH) -mcpu=$(MCPU) -g -o $@ $<
+  $(AS) -march=S(ARCH) -mcpu=$(MCPU) -I $(INC_DIRS) -g -o $@ $<
 
 
