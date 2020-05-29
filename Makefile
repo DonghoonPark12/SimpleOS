@@ -11,7 +11,7 @@ LINKER_SCRIPT = ./SimpleOS.ld
 ASM_SRCS = $(wildcard boot/*.S)
 ASM_OBJS = $(patsubst boot/%.S, build/%.o, $(ASM_SRCS))
 
-INC_DIRS = include
+INC_DIRS = Include
 
 SimpleOS = build/SimpleOS.axf
 SimpleOS_bin = build/SimpleOS.bin
