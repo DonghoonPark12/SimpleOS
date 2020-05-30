@@ -17,6 +17,13 @@
       int* const pBuf;
       Validator *const pValidator;
     } Stack;
+    
+    bool push(IN Stack *pST, IN int val){
+      if(!Interface(pST->pValidator, val) || isStackFiil(p)) 
+          return false;
+      p->pBuf[p->top++] = val;
+      return true;
+    }
 */
 
 int main(){
