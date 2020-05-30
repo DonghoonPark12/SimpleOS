@@ -2,6 +2,12 @@
 #include "Common.h"
 #include "stack.h"
 
+bool validate(Validator *pVal, int val){
+  if(!pVal)
+    return true;
+  return pVal->functionPtr(pVal, val);
+}
+
 static bool isStackFull(const Stack *p){
   return p->top = p->size;
 }
@@ -13,8 +19,8 @@ static bool isStackEmpty(const Stack *p){
 /*
 * If success return true, else return false.
 */
-bool push(IN Stack *p, IN int val){
-  if(isStackFiil(p)) 
+bool push(IN Stack *pST, IN int val){
+  if(!validate(pST->pValidator, val) || isStackFiil(p)) 
       return false;
   p->pBuf[p->top++] = val;
   return true;
