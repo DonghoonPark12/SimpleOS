@@ -19,10 +19,16 @@
     } Stack;
     
     bool push(IN Stack *pST, IN int val){
-      if(!Interface(pST->pValidator, val) || isStackFiil(p)) 
-          return false;
+      if(!Interface(pST->pValidator, val) || isStackFiil(p))  //앞서 본것 처럼 해당 스택의 Validator는 
+          return false;                                       //범위 검사 기능의 함수를 가리키는 포인터를 인자로 가지고 있다.
       p->pBuf[p->top++] = val;
       return true;
+    }
+    
+    bool Interface(Validator *pVal, int val){
+      if(!pVal)
+        return true; //스택안에 유효성 검사 기능이 없다면, 항상 참.
+      return pVal->functionPtr(pVal, val);
     }
 */
 
