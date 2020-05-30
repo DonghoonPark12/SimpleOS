@@ -7,9 +7,13 @@ LD = arm-none-eabi-ld
 OC = arm-none-eabi-objcopy
 
 LINKER_SCRIPT = ./SimpleOS.ld
+MAP_FILE = build/SimpleOS.map
 
 ASM_SRCS = $(wildcard boot/*.S)
 ASM_OBJS = $(patsubst boot/%.S, build/%.o, $(ASM_SRCS))
+
+C_SRCS = ($wildcard boot/*.c)
+C_OBJS = $(patsubst boot/%.c, build/%.o, $(C_SRCS))
 
 INC_DIRS = Include
 
@@ -32,11 +36,11 @@ debug: $(SimpleOS)
 gdb:
   arm-none-eabi-gdb
   
-$(SimpleOS): $(ASM_OBJS) $(LINKER_SCRIPT)
-  $(LD) -n -T $(LINKER_SCRIPT) -o $(SimpleOS) $(ASM_OBJS)
+$(SimpleOS): $(ASM_OBJS) $(C_OBJS) $(LINKER_SCRIPT)
+  $(LD) -n -T $(LINKER_SCRIPT) -o $(SimpleOS) $(ASM_OBJS) $(C_OBJS) -Map=$(MAP_FILE)
   $(OC) -O binary $(SimpleOS) $(SimpleOS_bin)
   
-build/%.o: boot/%.S
+build/%.o: $(C_SRCS)
   mkdir -p $(shell dirname $@)
   $(CC) -march=S(ARCH) -mcpu=$(MCPU) -I $(INC_DIRS) -c -g -o $@ $<
 
