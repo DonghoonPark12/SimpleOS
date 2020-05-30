@@ -3,6 +3,10 @@
 /*
     #define newStackWithValidator(buf, pValidator)   {0, sizeof(buf)/sizeof(int), (buf), pValidator}
     
+    bool validateRange(Validator *pThis, int val){
+      Range *pRange = (Range *)(pThis->pData);
+      return pRange->min <= val && val <= pRange->max;
+    }
 */
 
 int main(){
