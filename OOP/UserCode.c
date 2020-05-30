@@ -13,12 +13,18 @@
       void *const pData;
     } Validator;
 
+    typedef struct{
+      int top;
+      const size_t size;
+      int* const pBuf;
+      Validator *const pValidator;
+    } Stack;
 */
 
 int main(){
     int buf[16];
     Validator v = {validateRange, &{0,9}}; // Funtion addr, Data addr
-    Stack st = newStackWithValidator(buf, &v); 
+    Stack st = {0, sizeof(buf)/sizeof(int), buf, &v}; // Stack Initilize
     push(&st, 123);
  
     return 0;
