@@ -7,6 +7,12 @@
       Range *pRange = (Range *)(pThis->pData);
       return pRange->min <= val && val <= pRange->max;
     }
+    
+    typedef struct Validator {
+      bool (*const funtionPtr) (struct Validator *pThis, int val);
+      void *const pData;
+    } Validator;
+
 */
 
 int main(){
