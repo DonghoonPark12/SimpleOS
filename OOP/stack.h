@@ -12,7 +12,7 @@ typedef struct{
   int top;
   const size_t size;
   int* const pBuf;
-  Handle *const pHandle;
+  Validator *const pValidator;
 } Stack;
 
 bool push(Stack *p, int val);
@@ -24,10 +24,10 @@ bool pop(Stack *p, int *pRet);
 * 기능 추가를 용이하게 만들기 위해 추가한 Validator
 * 아래 Handle은 Validator로서 역할을 하며, 기능을 위한 인터페이스 역할을 한다.
 */
-typedef struct Handle {
-  bool (*const handle) (struct Handle *pThis, int val);
+typedef struct Validator {
+  bool (*const funtionPtr) (struct Validator *pThis, int val);
   void *const pData;
-} Handle;
+} Validator;
   
   
 typedef struct{
@@ -36,13 +36,13 @@ typedef struct{
 } Range;
   
 //#define newStackWithRangeCheck(buf, pRange)   {0, sizeof(buf)/sizeof(int), (buf), pRange}
-#define newStackWithValidator(buf, pRange)   {0, sizeof(buf)/sizeof(int), (buf), pHandle}
+#define newStackWithValidator(buf, pValidator)   {0, sizeof(buf)/sizeof(int), (buf), pValidator}
  
 /*
 * Validator 1 : Range Check
 * Return true, if val is within the range.
 */
-bool validateRange(Handle *pThis, int val){
+bool validateRange(Validator *pThis, int val){
   Range *pRange = (Range *)(pThis->pData);
   return pRange->min <= val && val <= pRange->max;
 }
