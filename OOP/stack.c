@@ -4,7 +4,7 @@
 
 /*
 * 단순 인터페이스 역할, Valiadator를 깨우면서, val를 체크.
-* pVal이 가리키는 functionPrt에는 일절 관여하지 않는다.
+* ★pVal이 가리키는 functionPrt에는 일절 관여하지 않는다.
 */
 bool Interface(Validator *pVal, int val){
   if(!pVal)
