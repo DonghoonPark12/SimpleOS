@@ -18,7 +18,7 @@ typedef struct{
 bool push(Stack *p, int val);
 bool pop(Stack *p, int *pRet);
 
-#define newStack(buf)  {0, sizeof(buf)/sizeof(int), (buf)};
+//#define newStack(buf)  {0, sizeof(buf)/sizeof(int), (buf)};
 
 /*
 * 기능 추가를 용이하게 만들기 위해 추가한 Validator
