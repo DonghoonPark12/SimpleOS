@@ -2,9 +2,13 @@
 #include "Common.h"
 #include "stack.h"
 
-bool validate(Validator *pVal, int val){
+/*
+* 단순 인터페이스 역할, Valiadator를 깨우면서, val를 체크.
+* pVal이 가리키는 functionPrt에는 일절 관여하지 않는다.
+*/
+bool Interface(Validator *pVal, int val){
   if(!pVal)
-    return true;
+    return true; //스택안에 유효성 검사 기능이 없다면, 항상 참.
   return pVal->functionPtr(pVal, val);
 }
 
@@ -20,7 +24,7 @@ static bool isStackEmpty(const Stack *p){
 * If success return true, else return false.
 */
 bool push(IN Stack *pST, IN int val){
-  if(!validate(pST->pValidator, val) || isStackFiil(p)) 
+  if(!Interface(pST->pValidator, val) || isStackFiil(p)) 
       return false;
   p->pBuf[p->top++] = val;
   return true;
