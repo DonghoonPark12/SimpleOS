@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include "Common.h"
 #include "stack.h"
 
 static bool isStackFull(const Stack *p){
