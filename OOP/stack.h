@@ -16,7 +16,7 @@ typedef struct{
 bool push(Stack *p, int val);
 bool pop(Stack *p, int *pRet);
 
-#define newStak(buf)  {0, sizeof(buf)/sizeof(int), buf};
+#define newStack(buf)  {0, sizeof(buf)/sizeof(int), buf};
 
 #ifdef __cplusplus
 }
