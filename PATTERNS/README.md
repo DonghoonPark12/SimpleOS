@@ -6,7 +6,3 @@ graph TD
     PAUSE --Play/Pause--> PLAY
     PAUSE --Stop-->IDLE
 ```
-
-
-  
-https://mermaidjs.github.io/#/
