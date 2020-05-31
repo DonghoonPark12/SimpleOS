@@ -10,10 +10,10 @@ extern "C" {
   
 typedef struct{
   int top;
-  const size_t size;
-  int* const pBuf;
-  Validator *const pValidator;
-} Stack;
+  const size_t size;              
+  int *const pBuf;                // const pointer to int <---> int const* pBuf : pointer to const int. Same as (const int* pBuf)
+  Validator *const pValidator;    // const pointer to Validate struct
+} Stack;                          // [https://stackoverflow.com/questions/21476869/constant-pointer-vs-pointer-to-constant]
 
 bool push(Stack *p, int val);
 bool pop(Stack *p, int *pRet);
