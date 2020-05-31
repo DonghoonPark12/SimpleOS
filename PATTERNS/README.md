@@ -3,8 +3,7 @@
 
 ![](./stm.JPG)
 
-
-  
+[//]: <  
 ```mermaid
 graph TD
     IDLE  --Play/Pause--> PLAY
@@ -13,3 +12,4 @@ graph TD
     PLAY  --Stop      --> IDLE
     PLAY  --Play/Pause--> PAUSE
 ```
+>
