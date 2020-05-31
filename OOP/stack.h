@@ -22,7 +22,7 @@ bool pop(Stack *p, int *pRet);
 
 /*
 * 기능 추가를 용이하게 만들기 위해 추가한 Validator
-* 아래 Handle은 Validator로서 역할을 하며, 기능을 위한 인터페이스 역할을 한다.
+* 기능을 위한 인터페이스 역할을 한다.
 */
 typedef struct Validator {
   bool (*const funtionPtr) (struct Validator *pThis, int val);
