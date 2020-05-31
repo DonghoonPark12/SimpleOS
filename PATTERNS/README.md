@@ -1,4 +1,4 @@
 ## State Diagram  
 
 
-![](/SimpleOS/PATTERNS/stm.JPG)
+![](./stm.JPG)
