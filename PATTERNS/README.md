@@ -8,3 +8,5 @@ graph TD
     PLAY  --Stop      --> IDLE
     PLAY  --Play/Pause--> PAUSE
 ```
+
+![](./stm.jpg)
