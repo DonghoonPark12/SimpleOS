@@ -1,3 +1,5 @@
+## State Diagram  
+  
 ```mermaid
 graph TD
     IDLE  --Play/Pause--> PLAY
