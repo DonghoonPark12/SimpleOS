@@ -14,8 +14,8 @@
     typedef struct{
       int top;
       const size_t size;
-      const int *pBuf;
-      const Validator *pValidator;
+      int *const pBuf;
+      Validator *const pValidator;
     } Stack;
     
     bool push(IN Stack *pST, IN int val){
