@@ -7,8 +7,8 @@
     }
     
     typedef struct Validator {
-      const bool (*funtionPtr) (struct Validator *pThis, int val);
-      const void *pData;
+      bool (*const funtionPtr) (struct Validator *pThis, int val);
+      void *const pData;
     } Validator;
 
     typedef struct{
