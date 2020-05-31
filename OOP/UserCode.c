@@ -7,15 +7,15 @@
     }
     
     typedef struct Validator {
-      bool (*const funtionPtr) (struct Validator *pThis, int val);
-      void *const pData;
+      const bool (*funtionPtr) (struct Validator *pThis, int val);
+      const void *pData;
     } Validator;
 
     typedef struct{
       int top;
       const size_t size;
-      int* const pBuf;
-      Validator *const pValidator;
+      const int *pBuf;
+      const Validator *pValidator;
     } Stack;
     
     bool push(IN Stack *pST, IN int val){
