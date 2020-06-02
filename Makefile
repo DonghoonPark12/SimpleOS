@@ -1,6 +1,8 @@
 ARCH = armv7-armv7
 MCPU = cortex-a8
 
+TARGET = RealViewPB
+
 CC = arm-none-eabi-gcc
 AS = arm-none-eabi-as
 LD = arm-none-eabi-ld
@@ -10,12 +12,20 @@ LINKER_SCRIPT = ./SimpleOS.ld
 MAP_FILE = build/SimpleOS.map
 
 ASM_SRCS = $(wildcard boot/*.S)
-ASM_OBJS = $(patsubst boot/%.S, build/%.o, $(ASM_SRCS))
+ASM_OBJS = $(patsubst boot/%.S, build/%.os, $(ASM_SRCS))
 
-C_SRCS = ($wildcard boot/*.c)
-C_OBJS = $(patsubst boot/%.c, build/%.o, $(C_SRCS))
+VPATH = boot \
+        hal/$(TARGET)
 
-INC_DIRS = Include
+C_SRCS = $(notdir $(wildcard boot/*.c))
+C_SRCS += $(notdir $(wildcard hal/$(TARGET)/*.c))
+C_OBJS = $(patsubst %.c, build/%.o, $(C_SRCS))
+
+INC_DIRS = -I Include \
+           -I hal     \
+           -I hal/$(TARGET)
+           
+CFLAGS = -c -g -std=c11
 
 SimpleOS = build/SimpleOS.axf
 SimpleOS_bin = build/SimpleOS.bin
@@ -28,7 +38,7 @@ clean:
   @rm -fr build
   
 run: $(SimpleOS)
-  qemu-system-arm -M realview-pb-a8 -kernel $(SimpleOS)
+  qemu-system-arm -M realview-pb-a8 -kernel $(SimpleOS) -nographic
   
 debug: $(SimpleOS)
   qemu-system-arm -M realview-pb-a8 -kernel $(SimpleOS) -S -gdb tcp::1234, ipv4
@@ -40,8 +50,10 @@ $(SimpleOS): $(ASM_OBJS) $(C_OBJS) $(LINKER_SCRIPT)
   $(LD) -n -T $(LINKER_SCRIPT) -o $(SimpleOS) $(ASM_OBJS) $(C_OBJS) -Map=$(MAP_FILE)
   $(OC) -O binary $(SimpleOS) $(SimpleOS_bin)
   
-build/%.o: $(C_SRCS)
+build/%.os: %.S
   mkdir -p $(shell dirname $@)
-  $(CC) -march=S(ARCH) -mcpu=$(MCPU) -I $(INC_DIRS) -c -g -o $@ $<
+  $(CC) -march=S(ARCH) -mcpu=$(MCPU) $(INC_DIRS) $(CFLAGS) -o $@ $<
 
-
+build/%.o: %.c
+  mkdir -p $(shell dirname $@)
+  $(CC) -march=S(ARCH) -mcpu=$(MCPU) $(INC_DIRS) $(CFLAGS) -o $@ $<
