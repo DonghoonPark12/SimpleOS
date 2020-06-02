@@ -1,6 +1,8 @@
 #include "stdint.h"
 #include "../hal/HalUart.h"
 
+#include "stdio.h"
+
 static void Hw_init(void);
 
 void main(){
@@ -11,6 +13,9 @@ void main(){
   {
     Hal_uart_put_char('N');  
   }
+  Hal_uart_put_char('\n');
+  
+  putstr("Hellow World\n");
 }
 
 static void Hw_init(void)
