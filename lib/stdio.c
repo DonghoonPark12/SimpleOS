@@ -13,3 +13,12 @@ uint32_t putstr(const char* s)
     return c;
 }
     
+uint32_t debug_printf(const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    vsprinf(printf_buf, format, args);
+    va_end(args);
+    
+    return putstr(printf_buf);
+}
