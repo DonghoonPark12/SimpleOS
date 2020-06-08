@@ -22,3 +22,42 @@ uint32_t debug_printf(const char* format, ...)
     
     return putstr(printf_buf);
 }
+
+
+uint32_t vsprintf(char* buf, const char* format, va_list arg)
+{
+    uint32_t c = 0;
+    char ch;
+    char* str;
+    uint32_t uint;
+    uint32_t hex;
+    
+    for(uint32_t i=0; format[i]; i++)
+    {
+        if(format[i] == %)
+        {
+            i++;
+            switch(foramt[i])
+            {
+                case 'c':
+                    /* ... */
+                    break;
+                case 's':
+                    /* ... */
+                    break;
+                case 'u':
+                    /* ... */
+                    break;
+                case 'x':
+                    /* ... */
+                    break;
+            }
+        }
+        else
+        {
+            buf[c++] = format[i];
+        }
+    }
+    
+    /* ... */
+}
