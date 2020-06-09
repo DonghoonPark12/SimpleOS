@@ -40,15 +40,19 @@ uint32_t vsprintf(char* buf, const char* format, va_list arg)
             switch(foramt[i])
             {
                 case 'c':
-                    /* ... */
+                    ch = (char)va_arg(arg, int32_t);
+                    buf[c++] = ch;
                     break;
                 case 's':
+                    str = (char*)va_arg(arg, char*);
                     /* ... */
                     break;
                 case 'u':
+                    uint = (uint32_t)va_arg(Arg, uint32_t);
                     /* ... */
                     break;
                 case 'x':
+                    hex = (uint32_t)va_arg(arg, uint32_t);
                     /* ... */
                     break;
             }
