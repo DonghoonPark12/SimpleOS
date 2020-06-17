@@ -45,15 +45,22 @@ uint32_t vsprintf(char* buf, const char* format, va_list arg)
                     break;
                 case 's':
                     str = (char*)va_arg(arg, char*);
-                    /* ... */
+                    if(str == NULL)
+                    {
+                        str = "(null)";   
+                    }
+                    while(*str)
+                    {
+                        buf[c++] = (*str++);    
+                    }
                     break;
                 case 'u':
-                    uint = (uint32_t)va_arg(Arg, uint32_t);
-                    /* ... */
+                    uint = (uint32_t)va_arg(arg, uint32_t);
+                    c += utoa(&buf[c], uint, utoa_dec);
                     break;
                 case 'x':
                     hex = (uint32_t)va_arg(arg, uint32_t);
-                    /* ... */
+                    c += utoa(&buf[c], hex, utoa_hex);
                     break;
             }
         }
@@ -63,5 +70,11 @@ uint32_t vsprintf(char* buf, const char* format, va_list arg)
         }
     }
     
-    /* ... */
+    if(c > PRINTF_BUF_LEN)
+    {
+        buf[0] = '\0';
+        return 0;
+    }
+    buf[c] = '\0';
+    return c;
 }
