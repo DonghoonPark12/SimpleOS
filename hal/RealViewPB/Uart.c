@@ -35,3 +35,25 @@ uint8_t Hal_uart_get_char(void)
       
     return (uint8_t)(data & 0xFF);
 }
+
+// uint8_t Hal_uart_get_char(void)
+// {
+// 	uint8_t data;
+
+// 	while(Uart->uartfr.bits.RXFE);
+
+// 	//Check for an error flag
+// 	if(Uart->uartdr.bits.BE || Uart->uartdr.bits.FE ||
+// 	   Uart->uartdr.bits.OE || Uart->uartdr.bits.PE)
+// 	{
+// 		// Clear the error
+// 		Uart->uartsr.bits.BE = 1;
+// 		Uart->uartsr.bits.FE = 1;
+// 		Uart->uartsr.bits.OE = 1;
+// 		Uart->uartsr.bits.PE = 1;
+// 		return 0;
+// 	}
+
+// 	data = Uart->uartdr.bits.DATA;
+// 	return data;
+// }
