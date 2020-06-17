@@ -1,4 +1,4 @@
-ARCH = armv7-armv7
+ARCH = armv7-a
 MCPU = cortex-a8
 
 TARGET = RealViewPB
@@ -18,7 +18,7 @@ VPATH = boot          \
         hal/$(TARGET) \
         lib
 
-C_SRCS = $(notdir $(wildcard boot/*.c))
+C_SRCS  = $(notdir $(wildcard boot/*.c))
 C_SRCS += $(notdir $(wildcard hal/$(TARGET)/*.c))
 C_SRCS += $(notdir $(wildcard lib/*.c))
 C_OBJS = $(patsubst %.c, build/%.o, $(C_SRCS))
@@ -38,25 +38,26 @@ SimpleOS_bin = build/SimpleOS.bin
 all: $(SimpleOS)
 
 clean:
-  @rm -fr build
-  
+	@rm -fr build
+	
 run: $(SimpleOS)
-  qemu-system-arm -M realview-pb-a8 -kernel $(SimpleOS) -nographic
-  
+	qemu-system-arm -M realview-pb-a8 -kernel $(SimpleOS) -nographic
+	
 debug: $(SimpleOS)
-  qemu-system-arm -M realview-pb-a8 -kernel $(SimpleOS) -S -gdb tcp::1234, ipv4
-  
+	qemu-system-arm -M realview-pb-a8 -kernel $(SimpleOS) -S -gdb tcp::1234,ipv4
+	
 gdb:
-  arm-none-eabi-gdb
-  
+	arm-none-eabi-gdb
+	
 $(SimpleOS): $(ASM_OBJS) $(C_OBJS) $(LINKER_SCRIPT)
-  $(LD) -n -T $(LINKER_SCRIPT) -o $(SimpleOS) $(ASM_OBJS) $(C_OBJS) -Map=$(MAP_FILE)
-  $(OC) -O binary $(SimpleOS) $(SimpleOS_bin)
-  
+	$(LD) -n -T $(LINKER_SCRIPT) -o $(SimpleOS) $(ASM_OBJS) $(C_OBJS) -Map=$(MAP_FILE)
+	$(OC) -O binary $(SimpleOS) $(SimpleOS_bin)
+	
 build/%.os: %.S
-  mkdir -p $(shell dirname $@)
-  $(CC) -march=S(ARCH) -mcpu=$(MCPU) $(INC_DIRS) $(CFLAGS) -o $@ $<
-
+	mkdir -p $(shell dirname $@)
+	$(CC) -march=$(ARCH) -mcpu=$(MCPU) $(INC_DIRS) $(CFLAGS) -o $@ $<
+	
 build/%.o: %.c
-  mkdir -p $(shell dirname $@)
-  $(CC) -march=S(ARCH) -mcpu=$(MCPU) $(INC_DIRS) $(CFLAGS) -o $@ $<
+	mkdir -p $(shell dirname $@)
+	$(CC) -march=$(ARCH) -mcpu=$(MCPU) $(INC_DIRS) $(CFLAGS) -o $@ $<
+	

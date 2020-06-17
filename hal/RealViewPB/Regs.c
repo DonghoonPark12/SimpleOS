@@ -1,7 +1,7 @@
 #include "stdint.h"
 #include "Uart.h"
 
-volatile PL011_t* Uart = (PL001_t*)UART_BASE_ADDRESS0;
+volatile PL011_t* Uart = (PL011_t*)UART_BASE_ADDRESS0;
 
 /*
 Uart->uartdr.DATA = data & 0xFF;
