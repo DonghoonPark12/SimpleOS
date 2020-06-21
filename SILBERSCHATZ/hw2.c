@@ -71,12 +71,6 @@ void simple_exit(void) {
 		kfree(tmp);
 	}
 
-	//list_for_each_entry_safe(ptr, next, &birthday_list, list) {
-	//	printk(KERN_INFO "OS Module: Removing %d.%d.%d\n", ptr->day, ptr->month, ptr->year);
-	//	list_del(&ptr->list);
-	//	kfree(ptr);
-	//}
-
 	printInfo("Module removed\n");
 }
 
