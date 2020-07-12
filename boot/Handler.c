@@ -1,5 +1,5 @@
 #include "stdbool.h"
-#include "stding.h"
+#include "stdint.h"
 #include "../hal/HalInterrupt.h"
 
 __attribute__ ((interrupt ("IRQ"))) void Irq_Handler(void)

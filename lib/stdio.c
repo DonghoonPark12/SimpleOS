@@ -2,6 +2,10 @@
 #include "HalUart.h"
 #include "stdio.h"
 
+#define PRINTF_BUF_LEN 1024
+
+static char printf_buf[PRINTF_BUF_LEN];     //1KB
+
 uint32_t putstr(const char* s)
 {
     uint32_t c = 0;
@@ -70,7 +74,7 @@ uint32_t vsprintf(char* buf, const char* format, va_list arg)
         }
     }
     
-    if(c > PRINTF_BUF_LEN)
+    if(c >= PRINTF_BUF_LEN)
     {
         buf[0] = '\0';
         return 0;

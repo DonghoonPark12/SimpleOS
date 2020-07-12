@@ -119,7 +119,7 @@ typedef struct GicDist_t
 
 #define GIC_PRIORITY_MASK_NONE  0xF
 
-#define GIC_IRG_START	32
-#define GIC_IRG_END		95
+#define GIC_IRQ_START	32
+#define GIC_IRQ_END		95
 
 #endif

@@ -9,7 +9,7 @@ extern volatile GicDist_t* GicDist;
 
 static InterHdlr_fptr sHandlers[INTERRUPT_HANDLER_NUM]; //Function pointer array
 
-void Hal_interrrupt_init(void)
+void Hal_interrupt_init(void)
 {
 	GicCpu->cpucontrol.bits.Enable = 1;
 	GicCpu->prioritymask.bits.Prioritymask = GIC_PRIORITY_MASK_NONE; //0xF
@@ -50,7 +50,7 @@ void Hal_interrupt_register_handler(InterHdlr_fptr handler, uint32_t interrupt_n
 
 void Hal_interrupt_run_handler(void)
 {
-	uint32_t interrupt_num = GicCpu->Interruptack.bits.InterruptID; /* Read from Interrupt acknoledge register, IRQ ID */
+	uint32_t interrupt_num = GicCpu->interruptack.bits.InterruptID; /* Read from Interrupt acknoledge register, IRQ ID */
 
 	if(sHandlers[interrupt_num] != NULL)
 	{

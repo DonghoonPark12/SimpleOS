@@ -5,7 +5,7 @@ TARGET = RealViewPB
 
 CC = arm-none-eabi-gcc
 AS = arm-none-eabi-as
-LD = arm-none-eabi-ld
+LD = arm-none-eabi-gcc
 OC = arm-none-eabi-objcopy
 
 LINKER_SCRIPT = ./SimpleOS.ld
@@ -28,7 +28,9 @@ INC_DIRS = -I Include       \
            -I hal/$(TARGET) \
            -I lib
            
-CFLAGS = -c -g -std=c11
+CFLAGS = -c -g -std=c11 -mthumb-interwork
+
+LDFLAGS = -nostartfiles -nostdlib -nodefaultlibs -static -lgcc
 
 SimpleOS = build/SimpleOS.axf
 SimpleOS_bin = build/SimpleOS.bin
@@ -48,16 +50,19 @@ debug: $(SimpleOS)
 	
 gdb:
 	arm-none-eabi-gdb
+
+kill:
+	kill -9 `ps aux | grep 'qemu' | awk 'NR==1{print $$2}'`
 	
 $(SimpleOS): $(ASM_OBJS) $(C_OBJS) $(LINKER_SCRIPT)
-	$(LD) -n -T $(LINKER_SCRIPT) -o $(SimpleOS) $(ASM_OBJS) $(C_OBJS) -Map=$(MAP_FILE)
+	$(LD) -n -T $(LINKER_SCRIPT) -o $(SimpleOS) $(ASM_OBJS) $(C_OBJS) -Wl,-Map=$(MAP_FILE) $(LDFLAGS)
 	$(OC) -O binary $(SimpleOS) $(SimpleOS_bin)
 	
 build/%.os: %.S
 	mkdir -p $(shell dirname $@)
-	$(CC) -march=$(ARCH) -mcpu=$(MCPU) $(INC_DIRS) $(CFLAGS) -o $@ $<
+	$(CC) -march=$(ARCH) -mcpu=$(MCPU) -marm $(INC_DIRS) $(CFLAGS) -o $@ $<
 	
 build/%.o: %.c
 	mkdir -p $(shell dirname $@)
-	$(CC) -march=$(ARCH) -mcpu=$(MCPU) $(INC_DIRS) $(CFLAGS) -o $@ $<
+	$(CC) -march=$(ARCH) -mcpu=$(MCPU) -marm $(INC_DIRS) $(CFLAGS) -o $@ $<
 	
