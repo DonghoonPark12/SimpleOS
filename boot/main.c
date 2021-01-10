@@ -1,6 +1,6 @@
 #include "stdint.h"
 #include "../hal/HalUart.h"
-//#include "../hal/HalInterrupt.h"
+#include "../hal/HalInterrupt.h"
 
 #include "stdio.h"
 
@@ -33,7 +33,7 @@ void main(){
 
 static void Hw_init(void)
 {
-    //Hal_interrupt_init();
+    Hal_interrupt_init();
     Hal_uart_init();
 }
 
