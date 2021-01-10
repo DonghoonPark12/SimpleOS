@@ -26,6 +26,7 @@ typedef struct KernelTcb_t
 {
     uint32_t sp;
     utin8_t* stack_base;
+    uint32_t priority; //우선순위를 테스크 컨트롤 블록에 추가
 } KernelTcb_t;
 
 typedef void (*KernelTaskFunc_t)(void);
