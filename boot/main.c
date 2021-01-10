@@ -2,37 +2,44 @@
 #include "../hal/HalUart.h"
 #include "../hal/HalInterrupt.h"
 #include "../hal/HalTimer.h"
+#include "../kernel/task.h"
 
 #include "stdio.h"
 #include "stdlib.h"
 
 static void Hw_init(void);
+static void Kernel_init(void);
 
 static void Printf_test(void);
 static void Timer_test(void);
 
+void User_task0(void);
+void User_task1(void);
+void User_task2(void);
+
 void main(){
-  Hw_init();
-  
-  uint32_t i = 20;
-  while(i--)
-  {
-    Hal_uart_put_char('N');  
-  }
-  Hal_uart_put_char('\n');
-  
-  putstr("Hellow World\n");
-  
-  Printf_test();
-  Timer_test();
+	Hw_init();
+
+	uint32_t i = 20;
+	while(i--)
+	{
+	Hal_uart_put_char('N');  
+	}
+	Hal_uart_put_char('\n');
+
+	putstr("Hellow World\n");
+
+	Printf_test();
+	Timer_test();
+	Kernel_init();
 	//while(1);
 
-  i = 100;
-  while(i--)
-  {
-      uint8_t ch = Hal_uart_get_char();
-      Hal_uart_put_char(ch);
-  }
+	i = 100;
+	while(i--)
+	{
+	  uint8_t ch = Hal_uart_get_char();
+	  Hal_uart_put_char(ch);
+	}
 }
 
 static void Hw_init(void)
@@ -40,6 +47,47 @@ static void Hw_init(void)
     Hal_interrupt_init();
     Hal_uart_init();
 	Hal_timer_init();
+}
+
+static void Kernel_init(void)
+{
+	uint32_t taskId;
+	
+	taskId = Kernel_task_create(User_task0);
+	if(NOT_ENOUGH_TASK_NUM == taskID)
+	{
+		putstr("Task0 creation fail\n");
+	}
+	
+    taskId = Kernel_task_create(User_task1);
+    if (NOT_ENOUGH_TASK_NUM == taskId)
+    {
+        putstr("Task1 creation fail\n");
+    }
+
+    taskId = Kernel_task_create(User_task2);
+    if (NOT_ENOUGH_TASK_NUM == taskId)
+    {
+        putstr("Task2 creation fail\n");
+    }	
+}
+
+void User_task0(void)
+{
+	debug_printf("User Task #0\n");
+	while(true); //[21.01.10] 현재는 테스크의 종료를 보장하는 기능이 없기 때문에, 테스크는 종료되면 안된다.
+}
+
+void User_task1(void)
+{
+	debug_printf("User Task #1\n");
+	while(true);
+}
+
+void User_task2(void)
+{
+	debug_printf("User Task #2\n");
+	while(true);
 }
 
 static void Printf_test(void)
