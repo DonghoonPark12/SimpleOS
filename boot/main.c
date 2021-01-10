@@ -1,11 +1,15 @@
 #include "stdint.h"
 #include "../hal/HalUart.h"
 #include "../hal/HalInterrupt.h"
+#include "../hal/HalTimer.h"
 
 #include "stdio.h"
+#include "stdlib.h"
 
 static void Hw_init(void);
+
 static void Printf_test(void);
+static void Timer_test(void);
 
 void main(){
   Hw_init();
@@ -20,7 +24,7 @@ void main(){
   putstr("Hellow World\n");
   
   Printf_test();
-  
+  Timer_test();
 	//while(1);
 
   i = 100;
@@ -35,6 +39,7 @@ static void Hw_init(void)
 {
     Hal_interrupt_init();
     Hal_uart_init();
+	Hal_timer_init();
 }
 
 static void Printf_test(void)
@@ -53,4 +58,13 @@ static void Printf_test(void)
 	
 	debug_printf("--------Chap7---------\n");
 	debug_printf("SYSCTRL0 %x\n", *sysctrl0);
+}
+
+static void Timer_test(void)
+{
+	while(true)
+	{
+        debug_printf("current count : %u\n", Hal_timer_get_1ms_counter());
+        delay(1000);		
+	}
 }
