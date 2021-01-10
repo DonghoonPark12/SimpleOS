@@ -70,13 +70,14 @@ void Hal_interrupt_register_handler(InterHdlr_fptr handler, uint32_t interrupt_n
 
 void Hal_interrupt_run_handler(void)
 {
-	uint32_t interrupt_num = GicCpu->interruptack.bits.InterruptID; /* Read from Interrupt acknoledge register, IRQ ID */
+	uint32_t interrupt_num = GicCpu->interruptack.bits.InterruptID; /* Read from Interrupt acknowledge register, IRQ ID */
 
 	if(sHandlers[interrupt_num] != NULL)
 	{
+		//함수 포인터 실행
 		sHandlers[interrupt_num]();
 	}
-
+	//인터럽트 컨트롤러에 해당 인터럽트 처리가 끝났다는 것을 알려줌
 	GicCpu->endofinterrupt.bits.InterruptID = interrupt_num;
 }
 
