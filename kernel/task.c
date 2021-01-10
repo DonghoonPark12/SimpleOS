@@ -84,6 +84,7 @@ static KernelTcb_t* Scheduler_priority_algorithm(void)
         KernelTcb_t* pNextTcb = &sTack_list[i];
         if(pNextTcb != sCurrent_tcb)
         {
+            //숫자가 작은 것이 우선순위가 낮다.
             if(pNextTcb->priority <= SCurrent->priority)
             {
                 return pNextTcb;   
