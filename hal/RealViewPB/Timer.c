@@ -56,5 +56,5 @@ static void interrupt_handler(void)
 {
     internal_1ms_counter++;
 
-    Timer->timerxintclr = 1;
+    Timer->timerxintclr = 1; //Interrup Clear
 }
