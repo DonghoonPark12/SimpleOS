@@ -37,6 +37,8 @@ void Kernel_task_init(void)
         //해당 OS는 '테스크 컨택스트'를 테스크 Stack에 저장.
         // '테스크 컨택스트'를 다른 곳에 저장해도 된다.
         sTack_list[i].sp -= sizeof(KernelTaskContext_t);
+     
+        //[Optional] SimpleOS 만의 구조. 테스크 스택안에, 테스크 컨택스트가 같이 들어가 있다.
         KernelTaskContext_t* ctx = (KernelTaskContext_t*)sTask_list[i].sp;
         ctx->pc = 0;
         ctx->spsr = ARM_MODE_BIT_SYS;
