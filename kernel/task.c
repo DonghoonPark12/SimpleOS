@@ -15,8 +15,9 @@ static KernelTcb_t  sTask_list[MAX_TASK_NUM];
 static KernelTcb_t* sCurrent_tcb;
 static KernelTcb_t* sNext_tcb;
 
-static uint32_t     sAllocated_tcb_index;
+static uint32_t     sAllocated_tcb_index; //테스크 크기 
 static uint32_t     sCurrent_tcb_index;
+static KernelTcb_t* Scheduler_round_robin_algorithm(void);
 
 void Kernel_task_init(void)
 {
@@ -65,4 +66,12 @@ uint32_t Kernel_task_create(KernelTaskFunc_t startFunc)
     ctx->pc = (uint32_t)startFunc;
     
     return (sAllocated_tcb_index - 1);
+}
+
+static KernelTcb_t* Scheduler_round_algorithm(void)
+{
+    sCurrent_tcb_index++;
+    sCurrent_tcb_index %= sAllocated_tcb_index;
+    
+    return &sTack_list[sCurrent_tcb_index];
 }
