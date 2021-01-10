@@ -82,7 +82,7 @@ static KernelTcb_t* Scheduler_priority_algorithm(void)
     for(uint32_t i = 0; i < sAllocated_tcb_index; i++)
     {
         KernelTcb_t* pNextTcb = &sTack_list[i];
-        if(pNextTcb != pNextTcb)
+        if(pNextTcb != sCurrent_tcb)
         {
             if(pNextTcb->priority <= SCurrent->priority)
             {
@@ -90,4 +90,5 @@ static KernelTcb_t* Scheduler_priority_algorithm(void)
             }
         }
     }
+    return sCurrent_tcb;
 }
