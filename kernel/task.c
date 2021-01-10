@@ -59,7 +59,8 @@ uint32_t Kernel_task_create(KernelTaskFunc_t startFunc)
     }
     
     //new_tcb->pc = (uint32_t)startFunc;
-    
+    new_tcb->priority = priority;
+ 
     // 현재 테스트 스택에 저장되어 있는 테스크 컨텍스트 주소 포인트(SP)를 가져오는 코드
     KernelTaskContext_t* ctx = (KernelTaskContext_t*)new_tcb->sp;
     // 함수 시작주소를 PC에 넣어준다
@@ -74,4 +75,19 @@ static KernelTcb_t* Scheduler_round_algorithm(void)
     sCurrent_tcb_index %= sAllocated_tcb_index;
     
     return &sTack_list[sCurrent_tcb_index];
+}
+
+static KernelTcb_t* Scheduler_priority_algorithm(void)
+{
+    for(uint32_t i = 0; i < sAllocated_tcb_index; i++)
+    {
+        KernelTcb_t* pNextTcb = &sTack_list[i];
+        if(pNextTcb != pNextTcb)
+        {
+            if(pNextTcb->priority <= SCurrent->priority)
+            {
+                return pNextTcb;   
+            }
+        }
+    }
 }
