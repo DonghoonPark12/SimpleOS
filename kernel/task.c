@@ -18,8 +18,8 @@ static KernelTcb_t* sNext_tcb;
 static uint32_t     sAllocated_tcb_index; //테스크 크기 
 static uint32_t     sCurrent_tcb_index;
 
-static __attribute__ ((naked)) vod Save_context(void);
-static __attribute__ ((naked)) vod Restore_context(void);
+static void Save_context(void);
+static void Restore_context(void);
 static KernelTcb_t* Scheduler_round_robin_algorithm(void);
 static KernelTcb_t* Scheduler_priority_algorithm(void);
 
@@ -50,9 +50,14 @@ void Kernel_task_init(void)
     }
 }
 
+/*
+    커널 시작할 때 한번만 호출되는 함수
+    sCurrent_tcb_index는 '0'이어야 한다.
+*/
 void Kernel_task_start(void)
 {
     sNext_tcb = &sTask_list[sCurrent_tcb_index];
+    //스케줄러 호출 생략. e.g. sNext_tcb = Scheduler_round_robin_algorithm();
     Restore_context();
 }
 
@@ -109,7 +114,7 @@ static __attribute__ ((naked)) void Save_context(void)
                                  //sCurrent->sp ='ARM_코너_SP_레지스터값' 과 동일 의미
 }
 
-static __attribute__ ((naked)) vod Restore_context(void)
+static __attribute__ ((naked)) void Restore_context(void)
 {
     // restore next task stack pointer from the next TCB
     __asm__ ("LDR   r0, =sNext_tcb"); //TCB의 sp 멤버 변수 값을 읽어 ARM 코어의 SP에 값을 쓰는 작업
