@@ -53,6 +53,7 @@ static void Hw_init(void)
 static void Kernel_init(void)
 {
 	uint32_t taskId;
+	Kernel_task_init();
 	Kernel_evnent_flag_init();
 
 	taskId = Kernel_task_create(User_task0);
@@ -82,10 +83,20 @@ void User_task0(void)
 	
 	//debug_printf("User Task #0\n");
 	//while(true); //[21.01.10] 현재는 테스크의 종료를 보장하는 기능이 없기 때문에, 테스크는 종료되면 안된다.
+	debug_printf("User Task #0 SP=0x%x\n", &local);
 	
 	while(true)
 	{
-		debug_printf("User Task #0 SP=0x%x\n", &local);
+		KernelEventFlag_t handle_event = Kernel_wait_events(KernelEventFlag_UartIn|KernelEventFlag_CmdOut);
+		switch(handle_event)
+		{
+			case KernelEventFlag_UartIn:
+				debug_printf("\nEvent handled by Task0\n");
+				break;
+			case KernelEventFlag_CmdOut:
+				debug_printf("\nCmdOut Event by Task0\n");
+				break;				
+		}
 		Kernel_yield();
 	}
 }
