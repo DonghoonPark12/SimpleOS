@@ -17,7 +17,11 @@ static KernelTcb_t* sNext_tcb;
 
 static uint32_t     sAllocated_tcb_index; //테스크 크기 
 static uint32_t     sCurrent_tcb_index;
+
+static __attribute__ ((naked)) vod Save_context(void);
+static __attribute__ ((naked)) vod Restore_context(void);
 static KernelTcb_t* Scheduler_round_robin_algorithm(void);
+static KernelTcb_t* Scheduler_priority_algorithm(void);
 
 void Kernel_task_init(void)
 {
@@ -46,6 +50,12 @@ void Kernel_task_init(void)
     }
 }
 
+void Kernel_task_start(void)
+{
+    sNext_tcb = &sTask_list[sCurrent_tcb_index];
+    Restore_context();
+}
+
 /*
     테스크로 동작할 함수를 TCB에 등록
 */
@@ -69,7 +79,50 @@ uint32_t Kernel_task_create(KernelTaskFunc_t startFunc)
     return (sAllocated_tcb_index - 1);
 }
 
-static KernelTcb_t* Scheduler_round_algorithm(void)
+void Kernel_task_scheduler(void)
+{
+    sCurrent_tcb = &sTack_list[sCurrent_tcb_index];
+    sNext_tcb = Scheduler_round_robin_algorithm();
+    
+    disable_irq();
+    Kernel_task_context_switching();
+    enable_irq();
+}
+
+__attribute__ ((naked)) void Kernel_task_context_switching(void)
+{
+    __asm__ ("B Save_context");
+    __asm__ ("B Restore_context");
+}
+
+static __attribute__ ((naked)) void Save_context(void)
+{
+    // save current task context into the current task stack
+    __asm__("PUSh  {lr}");     //LR을 스택에 푸시, LR은 KernelTaskContext_t의 pc 멤버 변수에 저장된다(?)
+    __asm__("PUSH  {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12}"); //범용 레지스터 스택에 푸시
+    __asm__ ("MRS  r0, cpsr"); // cpsr을 KernelTaskContext_t의 spsr 멤버 변수 위치에 저장(?)
+    __asm__ ("PUSH {r0}");        
+    // save current task stack pointer into the current TCB
+    __asm__ ("LDR   r0, =sCurrent_tcb"); // 현재 동작중인 TCB의 포인터 변수를 읽어 들인다.
+    __asm__ ("LDR   r0, [r0]"); //포인터에 저장된 값을 읽는다.
+    __asm__ ("STMIA r0!, {sp}"); //위의 라인에서 읽은 값을 베이스 메모리 주소로 해서, SP를 저장한다.
+                                 //sCurrent->sp ='ARM_코너_SP_레지스터값' 과 동일 의미
+}
+
+static __attribute__ ((naked)) vod Restore_context(void)
+{
+    // restore next task stack pointer from the next TCB
+    __asm__ ("LDR   r0, =sNext_tcb"); //TCB의 sp 멤버 변수 값을 읽어 ARM 코어의 SP에 값을 쓰는 작업
+    __asm__ ("LDR   r0, [r0]");
+    __asm__ ("LDMIA r0!, {sp}");
+    // restore next task context from the next task stack
+    __asm__ ("POP  {r0}");            //스택에 저장되어 있는 cpsr의 값을 꺼내서, ARM의 CPSR에 값을 쓰는 작업
+    __asm__ ("MSR   cpsr, r0");
+    __asm__ ("POP  {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12}");
+    __asm__ ("POP  {pc}");
+}
+
+static KernelTcb_t* Scheduler_round_robin_algorithm(void)
 {
     sCurrent_tcb_index++;
     sCurrent_tcb_index %= sAllocated_tcb_index;
