@@ -3,6 +3,7 @@
 #include "../hal/HalInterrupt.h"
 #include "../hal/HalTimer.h"
 #include "../kernel/task.h"
+#include "../kernel/Kernel.h"
 
 #include "stdio.h"
 #include "stdlib.h"
@@ -70,24 +71,50 @@ static void Kernel_init(void)
     {
         putstr("Task2 creation fail\n");
     }	
+	
+	Kernel_start();
 }
 
 void User_task0(void)
 {
-	debug_printf("User Task #0\n");
-	while(true); //[21.01.10] 현재는 테스크의 종료를 보장하는 기능이 없기 때문에, 테스크는 종료되면 안된다.
+	uint32_t local = 0;
+	
+	//debug_printf("User Task #0\n");
+	//while(true); //[21.01.10] 현재는 테스크의 종료를 보장하는 기능이 없기 때문에, 테스크는 종료되면 안된다.
+	
+	while(true)
+	{
+		debug_printf("User Task #0 SP=0x%x\n", &local);
+		Kernel_yield();
+	}
 }
 
 void User_task1(void)
 {
-	debug_printf("User Task #1\n");
-	while(true);
+	uint32_t local = 0;
+	
+	//debug_printf("User Task #1\n");
+	//while(true);
+	
+	while(true)
+	{
+		debug_printf("User Task #1 SP=0x%x\n", &local);
+		Kernel_yield();
+	}
 }
 
 void User_task2(void)
 {
-	debug_printf("User Task #2\n");
-	while(true);
+	uint32_t local = 0;
+	
+	//debug_printf("User Task #2\n");
+	//while(true);
+	
+	while(true)
+	{
+		debug_printf("User Task #2 SP=0x%x\n", &local);
+		Kernel_yield();
+	}
 }
 
 static void Printf_test(void)
