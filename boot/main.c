@@ -53,13 +53,14 @@ static void Hw_init(void)
 static void Kernel_init(void)
 {
 	uint32_t taskId;
-	
+	Kernel_evnent_flag_init();
+
 	taskId = Kernel_task_create(User_task0);
 	if(NOT_ENOUGH_TASK_NUM == taskID)
 	{
 		putstr("Task0 creation fail\n");
 	}
-	
+
     taskId = Kernel_task_create(User_task1);
     if (NOT_ENOUGH_TASK_NUM == taskId)
     {
