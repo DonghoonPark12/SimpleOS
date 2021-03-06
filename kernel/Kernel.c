@@ -51,3 +51,37 @@ KernelEventFlag_t  Kernel_wait_event(uint32_t waiting_list)
     }
     return KernelEventFlag_Empty;
 }
+
+bool Kernel_send_msg(KernelMsgQ_t Qname, void *data, uint32_t count)
+{
+    uint8_t *d = (uint8_t*)data;
+    
+    for (uint32_t i = 0 ; i < count ; i++)
+    {
+        if(false == Kernel_msgQ_enqueue(Qname, *d))
+        {
+            for(uint32_t j = 0; j < i; j++)
+            {
+                uint8_t rollback;
+                Kernel_msgQ_dequeue(Qname, &rollback);
+            }
+            return false;
+        }
+        d++;
+    }
+}
+
+uint32_t Kernel_recv_msg(KernelMsgQ_t Qname, void *out_data, uint32_t count)
+{
+    uint8_t *d = (uint8_t*)data;
+    
+    for(uint32_t i = 0; i < count; i++)
+    {
+        if(false == Kernel_msgQ_dequeue(Qname, d))
+        {
+            return i; //count 만큼 빼기도 전에 큐가 빈 경우   
+        }
+        d++;
+    }
+    return count;
+}
