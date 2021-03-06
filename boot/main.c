@@ -81,6 +81,10 @@ void User_task0(void)
 {
 	uint32_t local = 0;
 	
+	uint8_t cmdBuf[16];
+	uint32_t cmdBufIdx = 0;
+	uint8_t uartch = 0;
+	
 	//debug_printf("User Task #0\n");
 	//while(true); //[21.01.10] 현재는 테스크의 종료를 보장하는 기능이 없기 때문에, 테스크는 종료되면 안된다.
 	debug_printf("User Task #0 SP=0x%x\n", &local);
@@ -92,6 +96,43 @@ void User_task0(void)
 		{
 			case KernelEventFlag_UartIn:
 				debug_printf("\nEvent handled by Task0\n");
+				Kernel_recv_msg(KernelMsgQ_Task0, &uartch, 1);
+				if(uartch == '\r')
+				{
+					cmdBuf[cmdBufIdx] = '\0';
+					/* 에러 처리 하기 전
+					Kernel_send_msg(KernelMsgQ_Task1, &cmdBufIdx, 1);
+					Kernel_send_msg(KernelMsgQ_Task1, cmdBug, cmdBufIdx);
+					Kernel_send_events(KernelEventFlag_CmdIn);
+					*/
+					
+					/* 에러 처리 한 후 */
+					while(true)
+					{
+						Kernel_send_events(KernelEventFlag_CmdIn);
+						if(false == Kernel_send_msg(KernelMsgQ_Task1, &cmdBufIdx, 1))
+						{
+							Kernel_yield();	// Task1이 메시지 큐를 비워주길 기다린다.
+						}
+						else if(false == Kernel_send_msg(KernelMsgQ_Task1, cmdBug, cmdBufIdx))
+						{
+							uint8_t rollback;
+							Kernel_recv_msg(KernelMsg_Task1, &rollback, 1); //★ Task1으로 부터 보낸 길이 정보를 빼낸다(돌려 받는다).
+							Kernel_yield();
+						}
+						else
+						{
+							break;
+						}
+					}
+					cmdBufIdx = 0'
+				}
+				else
+				{
+					cmdBuf[cmdBufIdx] =  uartch;
+					cmdBufIdx++;
+					cmdBufIdx %= 16;
+				}
 				break;
 			case KernelEventFlag_CmdOut:
 				debug_printf("\nCmdOut Event by Task0\n");
@@ -108,9 +149,29 @@ void User_task1(void)
 	//debug_printf("User Task #1\n");
 	//while(true);
 	
+	/*
 	while(true)
 	{
 		debug_printf("User Task #1 SP=0x%x\n", &local);
+		Kernel_yield();
+	}
+	*/
+	debug_printf("User Task #1 SP=0x%x\n", &local);
+	uint8_t cmdlen = 0;
+	uint8_t cmd[16] = 0;
+	
+	while(true)
+	{
+		KernelEventFlag_t handle_event = Kernel_wait_events(KernelEventFlag_CmdIn);
+		switch(handle_event)
+		{
+			case KernelEventFlag_CmdIn:
+				memclr(cmd, 16);
+				Kernel_recv_msg(KernelMsgQTask1, &cmdlen, 1);
+				Kernel_recv_msg(KernelMsgQTask1, cmd, cmdlen);
+				debug_printf("\nRecv Cmd: %s\n", cmd);
+				break;
+		}
 		Kernel_yield();
 	}
 }
