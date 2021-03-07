@@ -8,6 +8,8 @@
 #ifndef KERNEL_MSG_H_
 #define KERNEL_MSG_H_
 
+#include "stdbool.h"
+
 #define MSG_Q_SIZE_BYTE     512
 
 typedef enum KernelMsgQ_t

@@ -5,10 +5,9 @@
  *      Author: dhpark
  */
  
-#include "stdint.h"
 #include "Timer.h"
-#include "../HalTimer.h"
-#include "../HalInterrupt.h"
+#include "HalTimer.h"
+#include "HalInterrupt.h"
 
 extern volatile Timer_t* Timer;
 

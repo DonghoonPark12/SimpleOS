@@ -4,6 +4,8 @@
 #include "../hal/HalTimer.h"
 #include "../kernel/task.h"
 #include "../kernel/Kernel.h"
+#include "../kernel/event.h"
+#include "../kernel/msg.h"
 
 #include "stdio.h"
 #include "stdlib.h"
@@ -24,7 +26,7 @@ void main(){
 	uint32_t i = 20;
 	while(i--)
 	{
-	Hal_uart_put_char('N');  
+		Hal_uart_put_char('N');  
 	}
 	Hal_uart_put_char('\n');
 
@@ -54,21 +56,21 @@ static void Kernel_init(void)
 {
 	uint32_t taskId;
 	Kernel_task_init();
-	Kernel_evnent_flag_init();
+	Kernel_event_flag_init();
 
-	taskId = Kernel_task_create(User_task0);
-	if(NOT_ENOUGH_TASK_NUM == taskID)
+	taskId = Kernel_task_create(User_task0, 0);
+	if(NOT_ENOUGH_TASK_NUM == taskId)
 	{
 		putstr("Task0 creation fail\n");
 	}
 
-    taskId = Kernel_task_create(User_task1);
+    taskId = Kernel_task_create(User_task1, 0);
     if (NOT_ENOUGH_TASK_NUM == taskId)
     {
         putstr("Task1 creation fail\n");
     }
 
-    taskId = Kernel_task_create(User_task2);
+    taskId = Kernel_task_create(User_task2, 0);
     if (NOT_ENOUGH_TASK_NUM == taskId)
     {
         putstr("Task2 creation fail\n");
@@ -114,10 +116,10 @@ void User_task0(void)
 						{
 							Kernel_yield();	// Task1이 메시지 큐를 비워주길 기다린다.
 						}
-						else if(false == Kernel_send_msg(KernelMsgQ_Task1, cmdBug, cmdBufIdx))
+						else if(false == Kernel_send_msg(KernelMsgQ_Task1, cmdBuf, cmdBufIdx))
 						{
 							uint8_t rollback;
-							Kernel_recv_msg(KernelMsg_Task1, &rollback, 1); //★ Task1으로 부터 보낸 길이 정보를 빼낸다(돌려 받는다).
+							Kernel_recv_msg(KernelMsgQ_Task1, &rollback, 1); //★ Task1으로 부터 보낸 길이 정보를 빼낸다(돌려 받는다).
 							Kernel_yield();
 						}
 						else
@@ -125,7 +127,7 @@ void User_task0(void)
 							break;
 						}
 					}
-					cmdBufIdx = 0'
+					cmdBufIdx = 0;
 				}
 				else
 				{
@@ -158,7 +160,7 @@ void User_task1(void)
 	*/
 	debug_printf("User Task #1 SP=0x%x\n", &local);
 	uint8_t cmdlen = 0;
-	uint8_t cmd[16] = 0;
+	uint8_t cmd[16] = {0};
 	
 	while(true)
 	{
@@ -167,8 +169,8 @@ void User_task1(void)
 		{
 			case KernelEventFlag_CmdIn:
 				memclr(cmd, 16);
-				Kernel_recv_msg(KernelMsgQTask1, &cmdlen, 1);
-				Kernel_recv_msg(KernelMsgQTask1, cmd, cmdlen);
+				Kernel_recv_msg(KernelMsgQ_Task1, &cmdlen, 1);
+				Kernel_recv_msg(KernelMsgQ_Task1, cmd, cmdlen);
 				debug_printf("\nRecv Cmd: %s\n", cmd);
 				break;
 		}
@@ -204,15 +206,20 @@ static void Printf_test(void)
 	debug_printf("dec = %u hex=%x\n", 0xff, 0xff);
 	debug_printf("print zero %u\n", 0);
 	
-	debug_printf("--------Chap7---------\n");
+	//debug_printf("--------Chap7---------\n");
 	debug_printf("SYSCTRL0 %x\n", *sysctrl0);
 }
 
 static void Timer_test(void)
 {
-	while(true)
-	{
+	// while(true)
+	// {
+    //     debug_printf("current count : %u\n", Hal_timer_get_1ms_counter());
+    //     delay(1000);		
+	// }
+	for(uint32_t i = 0; i < 5 ; i++)
+    {
         debug_printf("current count : %u\n", Hal_timer_get_1ms_counter());
-        delay(1000);		
-	}
+        delay(1000);
+    }
 }

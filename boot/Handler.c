@@ -9,5 +9,5 @@ __attribute__ ((interrupt ("IRQ"))) void Irq_Handler(void)
 
 __attribute__ ((interrupt ("FIQ"))) void Fiq_Handler(void)
 {
-	while(1);
+	while(true);
 }

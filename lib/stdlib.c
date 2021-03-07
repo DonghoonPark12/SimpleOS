@@ -4,9 +4,8 @@
  *  Created on: Jan 10, 2021
  *      Author: dhpark
  */
- 
-#include "stdint.h"
-#include "stdbool.h"
+
+#include "stdlib.h"
 #include "../HalTimer.h"
 
 void delay(uint32_t ms)
@@ -18,7 +17,7 @@ void delay(uint32_t ms)
 
 void memclr(void *dst, uint32_t count)
 {
-    uint8_t d = (uint8_t*)dst;
+    uint8_t *d = (uint8_t*)dst;
     while(count--)
     {
         *d++ = 0;   

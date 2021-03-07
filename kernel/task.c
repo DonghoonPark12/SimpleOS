@@ -11,6 +11,8 @@
 #include "ARMv7AR.h"
 #include "task.h"
 
+#include "MemoryMap.h"
+
 static KernelTcb_t  sTask_list[MAX_TASK_NUM];
 static KernelTcb_t* sCurrent_tcb;
 static KernelTcb_t* sNext_tcb;
@@ -35,13 +37,13 @@ void Kernel_task_init(void)
        // sFree_task_pool[i].pc = 0;
         
         // 스택 베이스 주소를 USR_STACK_SIZE 크기 만큼 늘려가며 설정
-        sTask_list[i].stack_base = (uint8_t*)(TASK_STACK_START + (i * USR_STACK_SIZE));
+        sTask_list[i].stack_base = (uint8_t*)(TASK_STACK_START + (i * USR_TASK_STACK_SIZE));
         // 스택 포인터 항당, 스택 포인터는 USR_TASK_STACK_SIZE 끝부분에서 시작한다.
         sTask_list[i].sp = (uint32_t)sTask_list[i].stack_base + USR_TASK_STACK_SIZE - 4;
         
         //해당 OS는 '테스크 컨택스트'를 테스크 Stack에 저장.
         // '테스크 컨택스트'를 다른 곳에 저장해도 된다.
-        sTack_list[i].sp -= sizeof(KernelTaskContext_t);
+        sTask_list[i].sp -= sizeof(KernelTaskContext_t);
      
         //[Optional] SimpleOS 만의 구조. 테스크 스택안에, 테스크 컨택스트가 같이 들어가 있다.
         KernelTaskContext_t* ctx = (KernelTaskContext_t*)sTask_list[i].sp;
@@ -64,7 +66,7 @@ void Kernel_task_start(void)
 /*
     테스크로 동작할 함수를 TCB에 등록
 */
-uint32_t Kernel_task_create(KernelTaskFunc_t startFunc)
+uint32_t Kernel_task_create(KernelTaskFunc_t startFunc, uint32_t priority)
 {
     KernelTcb_t* new_tcb = &sTask_list[sAllocated_tcb_index++];
     
@@ -86,7 +88,7 @@ uint32_t Kernel_task_create(KernelTaskFunc_t startFunc)
 
 void Kernel_task_scheduler(void)
 {
-    sCurrent_tcb = &sTack_list[sCurrent_tcb_index];
+    sCurrent_tcb = &sTask_list[sCurrent_tcb_index];
     sNext_tcb = Scheduler_round_robin_algorithm();
     
     //disable_irq();
@@ -132,18 +134,18 @@ static KernelTcb_t* Scheduler_round_robin_algorithm(void)
     sCurrent_tcb_index++;
     sCurrent_tcb_index %= sAllocated_tcb_index;
     
-    return &sTack_list[sCurrent_tcb_index];
+    return &sTask_list[sCurrent_tcb_index];
 }
 
 static KernelTcb_t* Scheduler_priority_algorithm(void)
 {
     for(uint32_t i = 0; i < sAllocated_tcb_index; i++)
     {
-        KernelTcb_t* pNextTcb = &sTack_list[i];
+        KernelTcb_t* pNextTcb = &sTask_list[i];
         if(pNextTcb != sCurrent_tcb)
         {
             //숫자가 작은 것이 우선순위가 낮다.
-            if(pNextTcb->priority <= SCurrent->priority)
+            if(pNextTcb->priority <= sCurrent_tcb->priority)
             {
                 return pNextTcb;   
             }

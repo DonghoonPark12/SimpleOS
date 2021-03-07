@@ -12,7 +12,7 @@
 
 static uint32_t sEventFlag;
 
-void Kernel_evern_flag_init(void)
+void Kernel_event_flag_init(void)
 {
     sEventFlag = 0;
 }

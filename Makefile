@@ -7,9 +7,11 @@ CC = arm-none-eabi-gcc
 AS = arm-none-eabi-as
 LD = arm-none-eabi-gcc
 OC = arm-none-eabi-objcopy
+OD = arm-none-eabi-objdump
 
 LINKER_SCRIPT = ./SimpleOS.ld
 MAP_FILE = build/SimpleOS.map
+SYM_FILE = build/SimpleOS.sym
 
 ASM_SRCS = $(wildcard boot/*.S)
 ASM_OBJS = $(patsubst boot/%.S, build/%.os, $(ASM_SRCS))
@@ -17,7 +19,7 @@ ASM_OBJS = $(patsubst boot/%.S, build/%.os, $(ASM_SRCS))
 VPATH = boot          \
         hal/$(TARGET) \
         lib           \
-	kernel
+		kernel
 
 C_SRCS  = $(notdir $(wildcard boot/*.c))
 C_SRCS += $(notdir $(wildcard hal/$(TARGET)/*.c))
@@ -29,7 +31,7 @@ INC_DIRS = -I Include       \
            -I hal           \
            -I hal/$(TARGET) \
            -I lib           \
-	   -I kernel
+	   	   -I kernel
            
 CFLAGS = -c -g -std=c11 -mthumb-interwork
 
@@ -49,7 +51,7 @@ run: $(SimpleOS)
 	qemu-system-arm -M realview-pb-a8 -kernel $(SimpleOS) -nographic
 	
 debug: $(SimpleOS)
-	qemu-system-arm -M realview-pb-a8 -kernel $(SimpleOS) -S -gdb tcp::1234,ipv4
+	qemu-system-arm -M realview-pb-a8 -kernel $(SimpleOS) -nographic -S -gdb tcp::1234,ipv4
 	
 gdb:
 	arm-none-eabi-gdb
@@ -59,6 +61,7 @@ kill:
 	
 $(SimpleOS): $(ASM_OBJS) $(C_OBJS) $(LINKER_SCRIPT)
 	$(LD) -n -T $(LINKER_SCRIPT) -o $(SimpleOS) $(ASM_OBJS) $(C_OBJS) -Wl,-Map=$(MAP_FILE) $(LDFLAGS)
+	$(OD) -t $(SimpleOS) > $(SYM_FILE)
 	$(OC) -O binary $(SimpleOS) $(SimpleOS_bin)
 	
 build/%.os: %.S
