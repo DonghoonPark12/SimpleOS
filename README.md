@@ -1,3 +1,3 @@
-# SimpleOS
+### SimpleOS
+- Simple Operating System
 
-https://github.com/DonghunP/SimpleOS/wiki
